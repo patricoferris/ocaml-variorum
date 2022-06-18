@@ -1,0 +1,3 @@
+[submodule "vendor/variorum"]
+	path = vendor/variorum
+	url = https://github.com/llnl/variorum

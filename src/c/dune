@@ -1,0 +1,76 @@
+(library
+ (name variorum_c)
+ (public_name variorum.c)
+ (library_flags -linkall)
+ (foreign_archives variorum)
+ (flags
+  (:standard -w -9-27))
+ (ctypes
+  (external_library_name variorum)
+  (build_flags_resolver
+   (vendored
+    (c_flags :standard -I src/c -I .)
+    (c_library_flags :standard -lhwloc -ljansson)))
+  (deps variorum.h variorum_error.h)
+  (headers
+   (include "variorum.h" "variorum_error.h"))
+  (type_description
+   (instance Type)
+   (functor Type_description))
+  (function_description
+   (concurrency sequential)
+   (instance Functions)
+   (functor Function_description))
+  (generated_types Types_generated)
+  (generated_entry_point C)))
+
+(rule
+ (deps
+  (source_tree %{project_root}/vendor/variorum))
+ (targets dllvariorum.so libvariorum.a variorum.h variorum_error.h)
+ (action
+  (no-infer
+   (progn
+    (chdir
+     %{project_root}/vendor/variorum
+     (progn
+      (run mkdir -p build && mkdir -p install)
+      (chdir
+       %{project_root}/vendor/variorum/build
+       (progn
+        (run
+         cmake
+         -DCMAKE_INSTALL_PREFIX=../install
+         -DENABLE_FORTRAN=OFF
+         -DBUILD_TESTS=OFF
+         -DBUILD_DOCS=OFF
+         -DBUILD_SHARED_LIBS=OFF
+         ../src)
+        (setenv
+         CFLAGS
+         "%{ocaml-config:ocamlc_cflags} -fPIC"
+         (run make -j))
+        (run make install)
+        (copy
+         %{project_root}/vendor/variorum/install/lib/libvariorum.a
+         %{project_root}/src/c/libvariorum.a)
+        (run
+         cmake
+         -DCMAKE_INSTALL_PREFIX=../install
+         -DENABLE_FORTRAN=OFF
+         -DBUILD_TESTS=OFF
+         -DBUILD_DOCS=OFF
+         -DBUILD_SHARED_LIBS=ON
+         ../src)
+        (setenv
+         CFLAGS
+         "%{ocaml-config:ocamlc_cflags}"
+         (run make -j))
+        (run make install)
+        (copy
+         %{project_root}/vendor/variorum/install/lib/libvariorum.so
+         %{project_root}/src/c/dllvariorum.so)))))
+    (copy %{project_root}/vendor/variorum/src/variorum/variorum.h variorum.h)
+    (copy
+     %{project_root}/vendor/variorum/src/variorum/variorum_error.h
+     variorum_error.h)))))
