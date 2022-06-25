@@ -3,7 +3,7 @@ ocaml-varorium
 
 *Status: WIP and Experimental*
 
-Bindings to the [varorium](https://github.com/llnl/variorum/) library, a tool for hardware-level feature control.
+Bindings to the [variorum](https://github.com/llnl/variorum/) library, a tool for hardware-level feature control.
 
 > ... a platform-agnostic library exposing monitor and control interfaces for several features in hardware architectures
 
