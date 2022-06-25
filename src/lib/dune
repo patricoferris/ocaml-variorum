@@ -1,13 +1,4 @@
 (library
  (public_name variorum)
- ;(foreign_archives variorum)
  (name variorum)
  (libraries variorum_c))
-
-;(rule
-; (targets libvariorum.a dllvariorum.so)
-;(deps %{project_root}/src/c/variorum.a %{project_root}/src/c/dllvariorum.so)
-;(action
-;  (progn
-;    (copy %{project_root}/src/c/variorum.a libvariorum.a)
-;    (copy %{project_root}/src/c/dllvariorum.so dllvariorum.so))))

@@ -10,6 +10,7 @@ doc: "https://ocaml.org/p/variorum"
 bug-reports: "https://github.com/patricoferris/ocaml-variorum/issues"
 depends: [
   "dune" {>= "3.0"}
+  "ctypes"
   "odoc" {with-doc}
 ]
 build: [
