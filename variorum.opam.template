@@ -1,0 +1,4 @@
+pin-depends: [
+  [ "hwloc.dev" "git+https://github.com/patricoferris/ocaml-hwloc#a0e3f9036abd17e2f01465867f7611036757a850" ]
+  [ "jansson.dev" "git+https://github.com/patricoferris/ocaml-jansson#051c4a9c4191be05e4a7458e42b5ec07eb96c3bf" ]
+]

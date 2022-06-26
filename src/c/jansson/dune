@@ -1,0 +1,14 @@
+(subdir
+ lib
+ (rule
+  (target libjansson.so)
+  (action
+   (copy "%{lib:jansson:../stublibs/dlljansson.so}" ./libjansson.so))))
+
+(rule
+ (targets libjansson.a jansson.h jansson_config.h)
+ (action
+  (progn
+   (copy "%{lib:jansson:c/jansson.h}" ./jansson.h)
+   (copy "%{lib:jansson:c/jansson_config.h}" ./jansson_config.h)
+   (copy "%{lib:jansson:c/libjansson.a}" ./libjansson.a))))

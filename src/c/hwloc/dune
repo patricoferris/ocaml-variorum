@@ -1,0 +1,29 @@
+(subdir
+ lib
+ (rule
+  (target libhwloc.so)
+  (action
+   (copy "%{lib:hwloc:../stublibs/dllhwloc.so}" ./libhwloc.so))))
+
+(rule
+ (targets
+  config.h
+  hwloc.h
+  rename.h
+  bitmap.h
+  helper.h
+  inlines.h
+  diff.h
+  deprecated.h
+  libhwloc.a)
+ (action
+  (progn
+   (copy "%{lib:hwloc:c/hwloc.h}" ./hwloc.h)
+   (copy "%{lib:hwloc:c/config.h}" ./config.h)
+   (copy "%{lib:hwloc:c/rename.h}" ./rename.h)
+   (copy "%{lib:hwloc:c/bitmap.h}" ./bitmap.h)
+   (copy "%{lib:hwloc:c/helper.h}" ./helper.h)
+   (copy "%{lib:hwloc:c/inlines.h}" ./inlines.h)
+   (copy "%{lib:hwloc:c/diff.h}" ./diff.h)
+   (copy "%{lib:hwloc:c/deprecated.h}" ./deprecated.h)
+   (copy "%{lib:hwloc:c/libhwloc.a}" ./libhwloc.a))))

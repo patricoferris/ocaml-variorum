@@ -23,6 +23,8 @@
  (description "A longer description")
  (depends
    ctypes
-   conf-cmake))
+   conf-cmake
+   hwloc
+   jansson))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
