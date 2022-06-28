@@ -42,9 +42,36 @@
   (generated_types Types_generated)
   (generated_entry_point C)))
 
+; There's probably a nicer way to do this...
+
+(rule
+  (target architecture.txt)
+  (enabled_if (or (= %{architecture} amd64) (= %{architecture} amd)))
+  (action
+    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_INTEL=ON"))))
+
+(rule
+  (target architecture.txt)
+  (enabled_if (or (= %{architecture} arm64) (= %{architecture} arm)))
+  (action
+    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_ARM=ON -DVARIORUM_WITH_INTEL=OFF"))))
+
+(rule
+  (target architecture.txt)
+  (enabled_if (= %{architecture} s390x)) ; Is this right?
+  (action
+    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_IBM=ON -DVARIORUM_WITH_INTEL=OFF"))))
+
+(rule
+  (target architecture.txt)
+  (enabled_if (= %{architecture} i386)) ; Is this right?
+  (action
+    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_INTEL=ON"))))
+
 (rule
  (deps
   hwloc/libhwloc.a
+  architecture.txt
   %{project_root}/src/c/hwloc/lib/libhwloc.so
   %{project_root}/src/c/jansson/lib/libjansson.so
   (source_tree %{project_root}/src/c/hwloc)
@@ -105,6 +132,7 @@
          cmake
          -DCMAKE_INSTALL_PREFIX=../install
          -DENABLE_FORTRAN=OFF
+         %{read-lines:architecture.txt}
          -DHWLOC_DIR=%{project_root}/src/c/hwloc
          -DJANSSON_DIR=%{project_root}/src/c/jansson
          -DBUILD_TESTS=OFF
@@ -123,6 +151,7 @@
          cmake
          -DCMAKE_INSTALL_PREFIX=../install
          -DENABLE_FORTRAN=OFF
+         %{read-lines:architecture.txt}
          -DHWLOC_DIR=%{project_root}/src/c/hwloc
          -DJANSSON_DIR=%{project_root}/src/c/jansson
          -DBUILD_TESTS=OFF
