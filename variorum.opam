@@ -32,6 +32,6 @@ build: [
 ]
 dev-repo: "git+https://github.com/patricoferris/ocaml-variorum.git"
 pin-depends: [
-  [ "hwloc.dev" "git+https://github.com/patricoferris/ocaml-hwloc#a0e3f9036abd17e2f01465867f7611036757a850" ]
-  [ "jansson.dev" "git+https://github.com/patricoferris/ocaml-jansson#051c4a9c4191be05e4a7458e42b5ec07eb96c3bf" ]
+  [ "hwloc.dev" "git+https://github.com/patricoferris/ocaml-hwloc#3447dc5c40f0d868529aafcc84b5d2d971062b30" ]
+  [ "jansson.dev" "git+https://github.com/patricoferris/ocaml-jansson#42cb429e722ec64807d75ae401758eb666c9d189" ]
 ]
