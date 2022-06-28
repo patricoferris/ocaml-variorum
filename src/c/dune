@@ -45,6 +45,8 @@
 (rule
  (deps
   hwloc/libhwloc.a
+  %{project_root}/src/c/hwloc/lib/libhwloc.so
+  %{project_root}/src/c/jansson/lib/libjansson.so
   (source_tree %{project_root}/src/c/hwloc)
   %{project_root}/src/c/jansson/jansson.h
   (source_tree %{project_root}/vendor/variorum))
