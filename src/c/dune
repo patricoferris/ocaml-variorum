@@ -54,19 +54,19 @@
   (target architecture.txt)
   (enabled_if (or (= %{architecture} arm64) (= %{architecture} arm)))
   (action
-    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_ARM=ON -DVARIORUM_WITH_INTEL=OFF"))))
+    (with-stdout-to %{target} (run echo " -DVARIORUM_WITH_ARM=ON -DVARIORUM_WITH_INTEL=OFF "))))
 
 (rule
   (target architecture.txt)
   (enabled_if (= %{architecture} s390x)) ; Is this right?
   (action
-    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_IBM=ON -DVARIORUM_WITH_INTEL=OFF"))))
+    (with-stdout-to %{target} (run echo " -DVARIORUM_WITH_IBM=ON -DVARIORUM_WITH_INTEL=OFF "))))
 
 (rule
   (target architecture.txt)
   (enabled_if (= %{architecture} i386)) ; Is this right?
   (action
-    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_INTEL=ON"))))
+    (with-stdout-to %{target} (run echo " -DVARIORUM_WITH_INTEL=ON "))))
 
 (rule
  (deps
