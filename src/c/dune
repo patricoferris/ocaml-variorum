@@ -47,28 +47,32 @@
 ; There's probably a nicer way to do this...
 
 (rule
-  (target architecture.txt)
+  (target architecture.txt intel.txt)
   (enabled_if (or (= %{architecture} amd64) (= %{architecture} amd)))
   (action
-    (with-stdout-to %{target} (run echo " -DVARIORUM_WITH_INTEL=ON "))))
+    (with-stdout-to intel.txt (run echo "-DVARIORUM_WITH_INTEL=ON"))
+    (with-stdout-to architecture.txt (run echo "-DVARIORUM_WITH_INTEL=ON"))))
 
 (rule
-  (target architecture.txt)
+  (target architecture.txt intel.txt)
   (enabled_if (or (= %{architecture} arm64) (= %{architecture} arm)))
   (action
-    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_ARM=ON"))))
+    (with-stdout-to intel.txt (run echo "-DVARIORUM_WITH_INTEL=OFF"))
+    (with-stdout-to architecture.txt (run echo "-DVARIORUM_WITH_ARM=ON"))))
 
 (rule
-  (target architecture.txt)
+  (target architecture.txt intel.txt)
   (enabled_if (= %{architecture} s390x)) ; Is this right?
   (action
-    (with-stdout-to %{target} (run echo " -DVARIORUM_WITH_IBM=ON -DVARIORUM_WITH_INTEL=OFF "))))
+    (with-stdout-to intel.txt (run echo "-DVARIORUM_WITH_INTEL=OFF"))
+    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_IBM=ON"))))
 
 (rule
-  (target architecture.txt)
+  (target architecture.txt intel.txt)
   (enabled_if (= %{architecture} i386)) ; Is this right?
   (action
-    (with-stdout-to %{target} (run echo " -DVARIORUM_WITH_INTEL=ON "))))
+    (with-stdout-to intel.txt (run echo "-DVARIORUM_WITH_INTEL=ON"))
+    (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_INTEL=ON"))))
 
 (rule
  (deps
@@ -136,6 +140,7 @@
          -DCMAKE_INSTALL_PREFIX=../install
          -DENABLE_FORTRAN=OFF
          %{read-lines:architecture.txt}
+         %{read-lines:intel.txt}
          -DHWLOC_DIR=%{project_root}/src/c/hwloc
          -DJANSSON_DIR=%{project_root}/src/c/jansson
          -DBUILD_TESTS=OFF
@@ -154,6 +159,7 @@
          cmake
          -DCMAKE_INSTALL_PREFIX=../install
          -DENABLE_FORTRAN=OFF
+	 %{read-lines:intel.txt}
          %{read-lines:architecture.txt}
          -DHWLOC_DIR=%{project_root}/src/c/hwloc
          -DJANSSON_DIR=%{project_root}/src/c/jansson
