@@ -83,6 +83,7 @@
  (action
   (no-infer
    (progn
+    (run cat architecture.txt)
     (chdir
      %{project_root}/vendor/variorum
      (progn
