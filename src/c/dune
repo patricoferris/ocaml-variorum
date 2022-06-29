@@ -68,7 +68,7 @@
   (action
     (progn 
       (with-stdout-to intel.txt (run echo "-DVARIORUM_WITH_INTEL=OFF"))
-      (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_IBM=ON")))))
+      (with-stdout-to architecture.txt (run echo "-DVARIORUM_WITH_IBM=ON")))))
 
 (rule
   (targets architecture.txt intel.txt)
@@ -76,7 +76,7 @@
   (action
     (progn
       (with-stdout-to intel.txt (run echo "-DVARIORUM_WITH_INTEL=ON"))
-      (with-stdout-to %{target} (run echo "-DVARIORUM_WITH_INTEL=ON")))))
+      (with-stdout-to architecture.txt (run echo "-DVARIORUM_WITH_INTEL=ON")))))
 
 (rule
  (deps
