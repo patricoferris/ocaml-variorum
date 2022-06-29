@@ -56,7 +56,7 @@
   (target architecture.txt)
   (enabled_if (or (= %{architecture} arm64) (= %{architecture} arm)))
   (action
-    (with-stdout-to %{target} (run echo " -DVARIORUM_WITH_ARM=ON -DVARIORUM_WITH_INTEL=OFF "))))
+    (with-stdout-to %{target} (run echo " -DVARIORUM_WITH_ARM=ON "))))
 
 (rule
   (target architecture.txt)
