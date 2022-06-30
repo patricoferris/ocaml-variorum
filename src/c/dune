@@ -94,7 +94,7 @@
 (rule
  (targets architecture.txt intel.txt)
  (enabled_if
-  (= %{architecture} ppc64)) ; Is this right?
+  (= %{architecture} power)) ; Is this right?
  (action
   (progn
    (with-stdout-to
