@@ -1,0 +1,5 @@
+depexts: ["linux-headers"] {os-distribution = "alpine"}
+pin-depends: [
+  [ "hwloc.dev" "git+https://github.com/patricoferris/ocaml-hwloc#3447dc5c40f0d868529aafcc84b5d2d971062b30" ]
+  [ "jansson.dev" "git+https://github.com/patricoferris/ocaml-jansson#42cb429e722ec64807d75ae401758eb666c9d189" ]
+]

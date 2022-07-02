@@ -1,7 +1,20 @@
+(rule
+ (target hwloc.loc)
+ (action
+  (with-stdout-to
+   hwloc.loc
+   (run dirname %{lib:hwloc:../stublibs/dllhwloc.so}))))
+
+(rule
+ (target jansson.loc)
+ (action
+  (with-stdout-to
+   jansson.loc
+   (run dirname %{lib:jansson:../stublibs/dlljansson.so}))))
+
 (library
  (name variorum_c)
  (public_name variorum.c)
- (library_flags -linkall)
  (foreign_archives variorum)
  (flags
   (:standard -w -9-27))
@@ -10,7 +23,14 @@
   (build_flags_resolver
    (vendored
     (c_flags :standard -I src/c -I .)
-    (c_library_flags :standard -lhwloc -ljansson)))
+    (c_library_flags
+     :standard
+     -Wl,-rpath={%read-lines:hwloc.loc}
+     -L{%read-lines:hwloc.loc}
+     -l:dllhwloc.so
+     -Wl,-rpath=%{read-lines:jansson.loc}
+     -L%{read-lines:jansson.loc}
+     -l:dlljansson.so)))
   (deps variorum.h variorum_error.h)
   (headers
    (include "variorum.h" "variorum_error.h"))
@@ -24,31 +44,155 @@
   (generated_types Types_generated)
   (generated_entry_point C)))
 
+; There's probably a nicer way to do this...
+
+(rule
+ (targets architecture.txt intel.txt)
+ (enabled_if
+  (or
+   (= %{architecture} amd64)
+   (= %{architecture} amd)))
+ (action
+  (progn
+   (with-stdout-to
+    intel.txt
+    (run echo "-DVARIORUM_WITH_INTEL=ON"))
+   (with-stdout-to
+    architecture.txt
+    (run echo "-DVARIORUM_WITH_INTEL=ON")))))
+
+(rule
+ (targets architecture.txt intel.txt)
+ (enabled_if
+  (or
+   (= %{architecture} arm64)
+   (= %{architecture} arm)))
+ (action
+  (progn
+   (with-stdout-to
+    intel.txt
+    (run echo "-DVARIORUM_WITH_INTEL=OFF"))
+   (with-stdout-to
+    architecture.txt
+    (run echo "-DVARIORUM_WITH_ARM=ON")))))
+
+(rule
+ (targets architecture.txt intel.txt)
+ (enabled_if
+  (= %{architecture} s390x)) ; Is this right?
+ (action
+  (progn
+   (with-stdout-to
+    intel.txt
+    (run echo "-DVARIORUM_WITH_INTEL=OFF"))
+   (with-stdout-to
+    architecture.txt
+    (run echo "-DVARIORUM_WITH_IBM=ON")))))
+
+; Is this IBM?
+
+(rule
+ (targets architecture.txt intel.txt)
+ (enabled_if
+  (= %{architecture} power)) ; Is this right?
+ (action
+  (progn
+   (with-stdout-to
+    intel.txt
+    (run echo "-DVARIORUM_WITH_INTEL=OFF"))
+   (with-stdout-to
+    architecture.txt
+    (run echo "-DVARIORUM_WITH_IBM=ON")))))
+
+(rule
+ (targets architecture.txt intel.txt)
+ (enabled_if
+  (= %{architecture} i386)) ; Is this right?
+ (action
+  (progn
+   (with-stdout-to
+    intel.txt
+    (run echo "-DVARIORUM_WITH_INTEL=ON"))
+   (with-stdout-to
+    architecture.txt
+    (run echo "-DVARIORUM_WITH_INTEL=ON")))))
+
 (rule
  (deps
+  hwloc/libhwloc.a
+  architecture.txt
+  %{project_root}/src/c/hwloc/lib/libhwloc.so
+  %{project_root}/src/c/jansson/lib/libjansson.so
+  (source_tree %{project_root}/src/c/hwloc)
+  %{project_root}/src/c/jansson/jansson.h
   (source_tree %{project_root}/vendor/variorum))
  (targets dllvariorum.so libvariorum.a variorum.h variorum_error.h)
  (action
   (no-infer
    (progn
+    (run cat architecture.txt)
     (chdir
      %{project_root}/vendor/variorum
      (progn
-      (run mkdir -p build && mkdir -p install)
+      (run
+       mkdir
+       -p
+       build
+       install
+       src/variorum/hwloc
+       src/variorum/hwloc/autogen)
       (chdir
        %{project_root}/vendor/variorum/build
        (progn
+        (copy %{project_root}/src/c/hwloc/hwloc.h ../src/variorum/hwloc.h)
+        (copy
+         %{project_root}/src/c/hwloc/rename.h
+         ../src/variorum/hwloc/rename.h)
+        (copy
+         %{project_root}/src/c/hwloc/bitmap.h
+         ../src/variorum/hwloc/bitmap.h)
+        (copy
+         %{project_root}/src/c/hwloc/inlines.h
+         ../src/variorum/hwloc/inlines.h)
+        (copy
+         %{project_root}/src/c/hwloc/diff.h
+         ../src/variorum/hwloc/diff.h)
+        (copy
+         %{project_root}/src/c/hwloc/helper.h
+         ../src/variorum/hwloc/helper.h)
+        (copy
+         %{project_root}/src/c/hwloc/deprecated.h
+         ../src/variorum/hwloc/deprecated.h)
+        (copy
+         %{project_root}/src/c/hwloc/config.h
+         ../src/variorum/hwloc/autogen/config.h)
+        (copy
+         %{project_root}/src/c/jansson/jansson.h
+         ../src/variorum/jansson.h)
+        (copy
+         %{project_root}/src/c/jansson/jansson.h
+         %{project_root}/src/c/jansson.h)
+        (copy
+         %{project_root}/src/c/jansson/jansson_config.h
+         %{project_root}/src/c/jansson_config.h)
+        (copy
+         %{project_root}/src/c/jansson/jansson_config.h
+         ../src/variorum/jansson_config.h)
         (run
          cmake
          -DCMAKE_INSTALL_PREFIX=../install
          -DENABLE_FORTRAN=OFF
+         %{read-lines:architecture.txt}
+         %{read-lines:intel.txt}
+         -DHWLOC_DIR=%{project_root}/src/c/hwloc
+         -DJANSSON_DIR=%{project_root}/src/c/jansson
          -DBUILD_TESTS=OFF
          -DBUILD_DOCS=OFF
          -DBUILD_SHARED_LIBS=OFF
          ../src)
         (setenv
          CFLAGS
-         "%{ocaml-config:ocamlc_cflags} -fPIC"
+         "%{ocaml-config:ocamlc_cflags}"
          (run make -j))
         (run make install)
         (copy
@@ -58,6 +202,10 @@
          cmake
          -DCMAKE_INSTALL_PREFIX=../install
          -DENABLE_FORTRAN=OFF
+         %{read-lines:intel.txt}
+         %{read-lines:architecture.txt}
+         -DHWLOC_DIR=%{project_root}/src/c/hwloc
+         -DJANSSON_DIR=%{project_root}/src/c/jansson
          -DBUILD_TESTS=OFF
          -DBUILD_DOCS=OFF
          -DBUILD_SHARED_LIBS=ON
