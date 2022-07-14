@@ -7,4 +7,4 @@ let main () =
   print_endline domain_info;
   Variorum.print_power ()
 
-let () = match main () with Ok () -> () | Error (`Msg m) -> failwith m
+let () = match main () with Ok () -> () | Error (`Msg m) -> print_endline m
