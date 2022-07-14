@@ -31,4 +31,23 @@ module Functions (F : Ctypes.FOREIGN) = struct
 
   let variorum_print_energy =
     foreign "variorum_print_energy" (void @-> returning int)
+
+  (* Hardware  *)
+
+  let variorum_get_num_sockets =
+    foreign "variorum_get_num_sockets" (void @-> returning int)
+
+  let variorum_get_num_cores =
+    foreign "variorum_get_num_cores" (void @-> returning int)
+
+  let variorum_get_num_threads =
+    foreign "variorum_get_num_threads" (void @-> returning int)
+
+  (* JSON API *)
+  let variorum_get_node_power_json =
+    foreign "variorum_get_node_power_json" (ptr string @-> returning int)
+
+  let variorum_get_node_power_domain_info_json =
+    foreign "variorum_get_node_power_domain_info_json"
+      (ptr string @-> returning int)
 end

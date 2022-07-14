@@ -33,7 +33,7 @@
      -l:dlljansson.so)))
   (deps variorum.h variorum_error.h)
   (headers
-   (include "variorum.h" "variorum_error.h"))
+   (include "variorum.h" "variorum_topology.h" "variorum_error.h"))
   (type_description
    (instance Type)
    (functor Type_description))
@@ -79,7 +79,8 @@
 (rule
  (targets architecture.txt intel.txt)
  (enabled_if
-  (= %{architecture} s390x)) ; Is this right?
+  (= %{architecture} s390x))
+ ; Is this right?
  (action
   (progn
    (with-stdout-to
@@ -94,7 +95,8 @@
 (rule
  (targets architecture.txt intel.txt)
  (enabled_if
-  (= %{architecture} power)) ; Is this right?
+  (= %{architecture} power))
+ ; Is this right?
  (action
   (progn
    (with-stdout-to
@@ -107,7 +109,8 @@
 (rule
  (targets architecture.txt intel.txt)
  (enabled_if
-  (= %{architecture} i386)) ; Is this right?
+  (= %{architecture} i386))
+ ; Is this right?
  (action
   (progn
    (with-stdout-to
@@ -124,9 +127,16 @@
   %{project_root}/src/c/hwloc/lib/libhwloc.so
   %{project_root}/src/c/jansson/lib/libjansson.so
   (source_tree %{project_root}/src/c/hwloc)
+  %{project_root}/src/c/hwloc/autogen/config.h
   %{project_root}/src/c/jansson/jansson.h
+  %{project_root}/src/c/hwloc/hwloc.h
   (source_tree %{project_root}/vendor/variorum))
- (targets dllvariorum.so libvariorum.a variorum.h variorum_error.h)
+ (targets
+  dllvariorum.so
+  libvariorum.a
+  variorum.h
+  variorum_topology.h
+  variorum_error.h)
  (action
   (no-infer
    (progn
@@ -146,6 +156,9 @@
        (progn
         (copy %{project_root}/src/c/hwloc/hwloc.h ../src/variorum/hwloc.h)
         (copy
+         %{project_root}/src/c/hwloc/hwloc.h
+         %{project_root}/src/c/hwloc.h)
+        (copy
          %{project_root}/src/c/hwloc/rename.h
          ../src/variorum/hwloc/rename.h)
         (copy
@@ -164,7 +177,7 @@
          %{project_root}/src/c/hwloc/deprecated.h
          ../src/variorum/hwloc/deprecated.h)
         (copy
-         %{project_root}/src/c/hwloc/config.h
+         %{project_root}/src/c/hwloc/autogen/config.h
          ../src/variorum/hwloc/autogen/config.h)
         (copy
          %{project_root}/src/c/jansson/jansson.h
@@ -188,6 +201,7 @@
          -DJANSSON_DIR=%{project_root}/src/c/jansson
          -DBUILD_TESTS=OFF
          -DBUILD_DOCS=OFF
+         -DVARIORUM_LOG=OFF
          -DBUILD_SHARED_LIBS=OFF
          ../src)
         (setenv
@@ -208,6 +222,7 @@
          -DJANSSON_DIR=%{project_root}/src/c/jansson
          -DBUILD_TESTS=OFF
          -DBUILD_DOCS=OFF
+         -DVARIORUM_LOG=OFF
          -DBUILD_SHARED_LIBS=ON
          ../src)
         (setenv
@@ -219,6 +234,9 @@
          %{project_root}/vendor/variorum/install/lib/libvariorum.so
          %{project_root}/src/c/dllvariorum.so)))))
     (copy %{project_root}/vendor/variorum/src/variorum/variorum.h variorum.h)
+    (copy
+     %{project_root}/vendor/variorum/src/variorum/variorum_topology.h
+     variorum_topology.h)
     (copy
      %{project_root}/vendor/variorum/src/variorum/variorum_error.h
      variorum_error.h)))))

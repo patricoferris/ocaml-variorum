@@ -5,9 +5,15 @@
   (action
    (copy "%{lib:hwloc:../stublibs/dllhwloc.so}" ./libhwloc.so))))
 
+(subdir
+ autogen
+ (rule
+  (target config.h)
+  (action
+   (copy "%{lib:hwloc:c/config.h}" config.h))))
+
 (rule
  (targets
-  config.h
   hwloc.h
   rename.h
   bitmap.h
@@ -19,7 +25,6 @@
  (action
   (progn
    (copy "%{lib:hwloc:c/hwloc.h}" ./hwloc.h)
-   (copy "%{lib:hwloc:c/config.h}" ./config.h)
    (copy "%{lib:hwloc:c/rename.h}" ./rename.h)
    (copy "%{lib:hwloc:c/bitmap.h}" ./bitmap.h)
    (copy "%{lib:hwloc:c/helper.h}" ./helper.h)
