@@ -45,39 +45,63 @@ module Node_power = struct
   let power_mem_watts_socket t = t.power_mem_watts_socket
   let power_gpu_watts_socket t = t.power_gpu_watts_socket
 
-  let to_json t = `O [
-    "hostname", `String t.hostname;
-    "timestamp", `Float t.timestamp;
-    "power_node_watts", `Float t.power_node;
-    "num_sockets", `Float (float_of_int t.num_sockets);
-    "power_cpu_watts_socket", `A (List.map Ezjsonm.float t.power_cpu_watts_socket);
-    "power_mem_watts_socket", `A (List.map Ezjsonm.float t.power_mem_watts_socket);
-    "power_gpu_watts_socket", `A (List.map Ezjsonm.float t.power_gpu_watts_socket);
-  ]
+  let to_json t =
+    `O
+      [
+        ("hostname", `String t.hostname);
+        ("timestamp", `Float t.timestamp);
+        ("power_node_watts", `Float t.power_node);
+        ("num_sockets", `Float (float_of_int t.num_sockets));
+        ( "power_cpu_watts_socket",
+          `A (List.map Ezjsonm.float t.power_cpu_watts_socket) );
+        ( "power_mem_watts_socket",
+          `A (List.map Ezjsonm.float t.power_mem_watts_socket) );
+        ( "power_gpu_watts_socket",
+          `A (List.map Ezjsonm.float t.power_gpu_watts_socket) );
+      ]
 
   let get_socket json n =
     let nth s = s ^ "_" ^ string_of_int n in
-    try  
-       let power_cpu_watts_socket = List.assoc (nth "power_cpu_watts_socket") json |> Ezjsonm.get_float in
-       let power_mem_watts_socket = List.assoc (nth "power_mem_watts_socket") json |> Ezjsonm.get_float in
-       let power_gpu_watts_socket = List.assoc (nth "power_gpu_watts_socket") json |> Ezjsonm.get_float in
-       Some (power_cpu_watts_socket, power_mem_watts_socket, power_gpu_watts_socket)
+    try
+      let power_cpu_watts_socket =
+        List.assoc (nth "power_cpu_watts_socket") json |> Ezjsonm.get_float
+      in
+      let power_mem_watts_socket =
+        List.assoc (nth "power_mem_watts_socket") json |> Ezjsonm.get_float
+      in
+      let power_gpu_watts_socket =
+        List.assoc (nth "power_gpu_watts_socket") json |> Ezjsonm.get_float
+      in
+      Some
+        (power_cpu_watts_socket, power_mem_watts_socket, power_gpu_watts_socket)
     with Not_found -> None
 
   let of_json = function
     | `O json ->
-       let hostname = (try List.assoc "hostname" json |> Ezjsonm.get_string with Not_found -> "A") in
-       let timestamp = List.assoc "timestamp" json |> Ezjsonm.get_float in
-       let power_node = List.assoc "power_node_watts" json |> Ezjsonm.get_float in
-       let rec loop (cpu, mem, gpu) n = 
-         match get_socket json n with
-         | None -> (List.rev cpu, List.rev mem, List.rev gpu)
-         | Some (c, m, g) -> loop (c::cpu, m::mem, g::gpu) (n + 1)
-       in
-       let cpu, mem, gpu = loop ([], [], []) 0 in
+        let hostname = List.assoc "hostname" json |> Ezjsonm.get_string in
+        let timestamp = List.assoc "timestamp" json |> Ezjsonm.get_float in
+        let power_node =
+          List.assoc "power_node_watts" json |> Ezjsonm.get_float
+        in
+        let rec loop (cpu, mem, gpu) n =
+          match get_socket json n with
+          | None -> (List.rev cpu, List.rev mem, List.rev gpu)
+          | Some (c, m, g) -> loop (c :: cpu, m :: mem, g :: gpu) (n + 1)
+        in
+        let cpu, mem, gpu = loop ([], [], []) 0 in
 
-       Ok { hostname; timestamp; power_node; num_sockets = List.length cpu; power_cpu_watts_socket = cpu;power_mem_watts_socket = mem ;power_gpu_watts_socket = gpu}
+        Ok
+          {
+            hostname;
+            timestamp;
+            power_node;
+            num_sockets = List.length cpu;
+            power_cpu_watts_socket = cpu;
+            power_mem_watts_socket = mem;
+            power_gpu_watts_socket = gpu;
+          }
     | _ -> Error (`Msg "Parsing node power failed!")
+
   let get () =
     let open Ctypes in
     (* Calculation based on: https://github.com/LLNL/variorum/blob/aa5bfa84dd50b144df95c642a4cad9fe22ea08a4/src/examples/variorum-get-node-power-json-example.c#L47*)
