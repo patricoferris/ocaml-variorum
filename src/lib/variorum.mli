@@ -55,7 +55,21 @@ val get_num_threads : unit -> (int, [ `Msg of string ]) result
 (** The number of threads on the hardware platform *)
 
 module Node_power : sig
-  val get : unit -> (string, [ `Msg of string ]) result
+  type t
+
+  val hostname : t -> string
+  val timestamp : t -> float
+  val power_node : t -> float
+  val num_sockets : t -> int
+  val power_cpu_watts_socket : t -> float list
+  val power_mem_watts_socket : t -> float list
+  val power_gpu_watts_socket : t -> float list
+
+  val to_json : t -> Ezjsonm.value
+
+  val of_json : Ezjsonm.value -> (t, [`Msg of string]) result
+
+  val get : unit -> (t, [ `Msg of string ]) result
   (** Returns the node power information as a JSON string *)
 
   val get_domain_info : unit -> (string, [ `Msg of string ]) result

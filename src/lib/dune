@@ -1,4 +1,4 @@
 (library
  (public_name variorum)
  (name variorum)
- (libraries variorum_c))
+ (libraries ezjsonm variorum_c))
