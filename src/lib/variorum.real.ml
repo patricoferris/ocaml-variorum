@@ -1,6 +1,8 @@
 module T = Variorum_c.C.Type
 module F = Variorum_c.C.Functions
 
+let supported = true
+
 let with_error = function
   | 0 -> Ok ()
   | n -> Error (`Msg (F.get_variorum_error_message n))

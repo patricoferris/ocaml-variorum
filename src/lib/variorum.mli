@@ -6,17 +6,14 @@
     you might have to do to get things working, please visit their
     excellent {{: https://variorum.readthedocs.io/} documentation site}. *)
 
-module T = Variorum_c.C.Type
-(** Types for the C bindings *)
-
-module F = Variorum_c.C.Functions
-(** Functions for the C bindings *)
-
 (** {2 Printing Functions}
 
     For more information about these function please visit the
     {{: https://variorum.readthedocs.io/en/latest/api/print_functions.html} print_functions documentation page}. This includes helpful information like supported architectures for each function.
 *)
+
+val supported : bool
+(** Whether the implementation will return values or are [Undefined] *)
 
 val print_power_limit : unit -> (unit, [ `Msg of string ]) result
 (** Print power limits for all known domains *)
