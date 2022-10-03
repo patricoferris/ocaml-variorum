@@ -123,6 +123,8 @@
     (run echo "-DVARIORUM_WITH_INTEL=ON")))))
 
 (rule
+ (enabled_if
+  (<> %{system} macosx))
  (deps
   hwloc/libhwloc.a
   architecture.txt

@@ -11,14 +11,11 @@ let print_power = undefined
 let print_hyperthreading = undefined
 let print_topology = undefined
 let print_energy = undefined
-let topology_error = undefined
 let get_num_of_sockets = undefined
 let get_num_cores = undefined
 let get_num_threads = undefined
 
 module Node_power = struct
-  let ( >>= ) = Result.bind
-
   type t = {
     hostname : string;
     timestamp : float;
