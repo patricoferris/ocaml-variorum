@@ -23,6 +23,7 @@
  (description "A longer description")
  (depends
    ctypes
+   ezjsonm
    conf-cmake
    hwloc
    jansson))

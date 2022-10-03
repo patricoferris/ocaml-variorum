@@ -14,6 +14,8 @@
 
 (library
  (name variorum_c)
+ (enabled_if
+  (<> %{system} macosx))
  (public_name variorum.c)
  (foreign_archives variorum)
  (flags
@@ -22,7 +24,7 @@
   (external_library_name variorum)
   (build_flags_resolver
    (vendored
-    (c_flags :standard -I src/c -I .)
+    (c_flags :standard -I src/c -I . -I ocaml-variorum/src/c) ; HACK for vendoring
     (c_library_flags
      :standard
      -Wl,-rpath={%read-lines:hwloc.loc}
@@ -121,6 +123,8 @@
     (run echo "-DVARIORUM_WITH_INTEL=ON")))))
 
 (rule
+ (enabled_if
+  (<> %{system} macosx))
  (deps
   hwloc/libhwloc.a
   architecture.txt

@@ -11,6 +11,7 @@ bug-reports: "https://github.com/patricoferris/ocaml-variorum/issues"
 depends: [
   "dune" {>= "3.0"}
   "ctypes"
+  "ezjsonm"
   "conf-cmake"
   "hwloc"
   "jansson"

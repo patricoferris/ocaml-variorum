@@ -6,17 +6,14 @@
     you might have to do to get things working, please visit their
     excellent {{: https://variorum.readthedocs.io/} documentation site}. *)
 
-module T = Variorum_c.C.Type
-(** Types for the C bindings *)
-
-module F = Variorum_c.C.Functions
-(** Functions for the C bindings *)
-
 (** {2 Printing Functions}
 
     For more information about these function please visit the
     {{: https://variorum.readthedocs.io/en/latest/api/print_functions.html} print_functions documentation page}. This includes helpful information like supported architectures for each function.
 *)
+
+val supported : bool
+(** Whether the implementation will return values or are [Undefined] *)
 
 val print_power_limit : unit -> (unit, [ `Msg of string ]) result
 (** Print power limits for all known domains *)
@@ -55,7 +52,19 @@ val get_num_threads : unit -> (int, [ `Msg of string ]) result
 (** The number of threads on the hardware platform *)
 
 module Node_power : sig
-  val get : unit -> (string, [ `Msg of string ]) result
+  type t
+
+  val hostname : t -> string
+  val timestamp : t -> float
+  val power_node : t -> float
+  val num_sockets : t -> int
+  val power_cpu_watts_socket : t -> float list
+  val power_mem_watts_socket : t -> float list
+  val power_gpu_watts_socket : t -> float list
+  val to_json : t -> Ezjsonm.value
+  val of_json : Ezjsonm.value -> (t, [ `Msg of string ]) result
+
+  val get : unit -> (t, [ `Msg of string ]) result
   (** Returns the node power information as a JSON string *)
 
   val get_domain_info : unit -> (string, [ `Msg of string ]) result
